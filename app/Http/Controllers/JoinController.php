@@ -31,7 +31,8 @@ class JoinController extends Controller
   public function index(Request $request)
   {
     //Logic to handle first-time room login
-    $input = $request->all();
+    $input = array_map('strtoupper', $request->all());
+
     $validation = Validator::make($input, [
       'room_code' => 'required|size:4|exists:rooms,room_code'
     ]);
@@ -42,7 +43,7 @@ class JoinController extends Controller
         ->withErrors($validation);
     }
 
-    $room = Room::where('room_code', $request->room_code)->first();
+    $room = Room::where('room_code', strtoupper($request->room_code))->first();
 
     if (isset($request->search_query)) {
       $response = self::getSearchResponse($request->search_query);
@@ -84,6 +85,6 @@ class JoinController extends Controller
     ->action('JoinController@index', [
       'room_code' => $request->room_code,
       'search_query' => $request->search_query
-    ])->with('status', 'Successfully submitted video');
+    ])->with('status', 'Successfully submitted video: '.$request->title.'.');
   }
 }

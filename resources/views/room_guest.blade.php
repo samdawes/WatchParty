@@ -71,4 +71,11 @@
   </tbody>
 </table>
 @endisset
+
+@empty($search_results)
+<p style="text-align: center">
+  You can add videos to {{$room->name}} here.<br />
+  You can search YouTube by keyword or you can paste the entire YouTube video URL into the search bar to add a specific video.
+</p>
+@endempty
 @endsection
