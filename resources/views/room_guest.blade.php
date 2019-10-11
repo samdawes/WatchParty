@@ -81,7 +81,7 @@
 @endempty
 
 <script>
-let connection = new WebSocket('ws://localhost:8080', 'guest');
+let connection = new WebSocket('wss://samdawes-watchpartyserver.herokuapp.com', 'guest');
 
 connection.onopen = () => {
   console.log('Connected from the frontend.');

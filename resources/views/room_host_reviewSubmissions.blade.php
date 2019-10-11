@@ -87,7 +87,7 @@
 </table>
 
 <script>
-let connection = new WebSocket('ws://localhost:8080', '{{$room->room_code}}');
+let connection = new WebSocket('wss://samdawes-watchpartyserver.herokuapp.com', '{{$room->room_code}}');
 
 connection.onopen = () => {
   console.log('connected from the frontend');
