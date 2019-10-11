@@ -33,6 +33,7 @@
 <div class="alert alert-success">
   {{session('status')}}
 </div>
+<script>submitVideo();</script>
 @endif
 
 <!-- Search Form -->
@@ -54,12 +55,12 @@
       <td><iframe width="{{$result['snippet']['thumbnails']['medium']['width']}}" height="{{$result['snippet']['thumbnails']['medium']['height']}}" src="https://www.youtube.com/embed/{{$result['id']['videoId']}}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></td>
       <td><strong>{{$result['snippet']['title']}}</strong><br />by {{$result['snippet']['channelTitle']}}</td>
       <td class="text-center align-middle">
-        <form action="/guest" method="post">
+        <form id="videoForm" action="/guest" method="post" onsubmit="myFunction('{{$room->room_code}}', '{{$room->id}}', '{{$room->youtube_id}}', '{{$result['snippet']['title']}}', '{{$result['snippet']['channelTitle']}}', '{{$result['id']['videoId']}}', '{{$result['snippet']['thumbnails']['medium']['width']}}', '{{$result['snippet']['thumbnails']['medium']['height']}}')">
           @csrf
           <input type="hidden" name="room_code" value="{{$room->room_code}}" />
           <input type="hidden" name="search_query" value="{{$search_query}}" />
           <input type="hidden" name="youtube_id" value="{{$result['id']['videoId']}}" />
-          <input type="hidden" name="title" value="{{$result['snippet']['title']}}" />
+          <input type="hidden" id="title" name="title" value="{{$result['snippet']['title']}}" />
           <input type="hidden" name="channel_name" value="{{$result['snippet']['channelTitle']}}" />
           <input type="hidden" name="width" value="{{$result['snippet']['thumbnails']['medium']['width']}}" />
           <input type="hidden" name="height" value="{{$result['snippet']['thumbnails']['medium']['height']}}" />
@@ -74,8 +75,42 @@
 
 @empty($search_results)
 <p style="text-align: center">
-  You can add videos to {{$room->name}} here.<br />
+  You can add videos to <em>{{$room->name}}</em> here.<br />
   You can search YouTube by keyword or you can paste the entire YouTube video URL into the search bar to add a specific video.
 </p>
 @endempty
+
+<script>
+let connection = new WebSocket('ws://localhost:8080', 'guest');
+
+connection.onopen = () => {
+  console.log('Connected from the frontend.');
+};
+
+connection.onerror = () => {
+  console.log('failed to connect from the frontend');
+};
+
+function myFunction(room_code, room_id, playlist_id, title, channel_name, youtube_id, width, height) {
+  console.log("The form was submitted.");
+  console.log(title);
+  console.log(channel_name);
+  console.log(youtube_id);
+  console.log(width);
+  console.log(height);
+  console.log("end of variables.");
+
+  let message = {
+    'room_code': room_code,
+    'room_id': room_id,
+    'playlist_id': playlist_id,
+    'title': title,
+    'channel_name': channel_name,
+    'youtube_id': youtube_id,
+    'width': width,
+    'height': height
+  };
+  connection.send(JSON.stringify(message));
+}
+</script>
 @endsection

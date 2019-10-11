@@ -77,7 +77,10 @@ class RoomController extends Controller
       $response = $service->playlistItems->insert('snippet', $playlistItem);
 
       //Delete submission from DB
-      Submission::where('id', $request->submission_id)->delete();
+      Submission::where([
+        ['room_id', $request->room_id],
+        ['youtube_id', $request->video_id]
+      ])->delete();
 
       return redirect()
       ->route('host.reviewSubmissions', ['id' => $id])
@@ -85,7 +88,10 @@ class RoomController extends Controller
     }
 
     if ($action == "delete") {
-      Submission::where('id', $request->submission_id)->delete();
+      Submission::where([
+        ['room_id', $request->room_id],
+        ['youtube_id', $request->video_id]
+      ])->delete();
 
       return redirect()
       ->route('host.reviewSubmissions', ['id' => $id])
